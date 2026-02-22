@@ -1,0 +1,15 @@
+[project]
+name = "git-log-to-excel"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "ipykernel>=7.2.0",
+    "openpyxl>=3.1.5",
+    "pandas>=3.0.1",
+]
+
+[build-system]
+requires = ["uv_build>=0.10.2,<0.11.0"]
+build-backend = "uv_build"
