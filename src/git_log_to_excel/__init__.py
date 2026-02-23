@@ -109,7 +109,6 @@ def log_collector(
     output_path: Path | str,
 ) -> dict|None:
     cmd = [
-        "git",
         "log",
         f'--since={start_date}',
         f'--until={end_date}',
@@ -127,13 +126,15 @@ def log_collector(
             print(f"路径 {str(path.absolute())} 不存在!")
             return None
         try:
-            result = subprocess.run(cmd, 
+            this_cmd = ["git", "-C", f'"{str(path.absolute())}"'] + cmd
+            result = subprocess.run(this_cmd, 
                                     capture_output=True, 
                                     text=True, 
                                     check=True)
             git_log = result.stdout
         except subprocess.CalledProcessError as e:
             print(f"获取日志时发生错误: {e.stderr}")
+            break
         if len(git_log) == 0:
             continue
         module_df = pd.DataFrame(
