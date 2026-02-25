@@ -74,7 +74,7 @@ def write_to_excel(
         ws.append(renamed_columns)
         [ws.append(row) for row in rows]
         for i in range(1, len(columns) + 1):
-            for j in range(1, len(rows) + 1):
+            for j in range(1, len(rows) + 2):
                 cell_ref = ws.cell(row=j, column=i)
                 cell_ref.border = thin_border
                 if i == 2:
@@ -155,14 +155,14 @@ def log_collector(
         module_df["cat"] = module_df["ori"].apply(match_category)
         module_df = module_df.loc[module_df["cat"].notna() & module_df["date"].notna()]
         module_df["content"] = module_df["ori"].apply(get_content)
-        module_df["date"] = pd.to_datetime(module_df["date"])
-        module_df = module_df.sort_values(by=['content', 'date'])
-        module_df["date_delta"] = module_df.groupby('content')['date'].transform(lambda x: (x - x.min()).dt.days)
+        module_df["date_temp"] = pd.to_datetime(module_df["date"])
+        module_df = module_df.sort_values(by=['content', 'date_temp'])
+        module_df["date_delta"] = module_df.groupby('content')['date_temp'].transform(lambda x: (x - x.min()).dt.days)
         module_df["date_delta"] = module_df['date_delta'].apply(lambda x: 1 if x == 0 else x)
         module_df = module_df.drop_duplicates(subset=["cat", "content"], keep="last")
         module_df = module_df.loc[module_df["content"].notna()]
         module_df["cat"] = pd.Categorical(module_df['cat'], categories=CAT_ORDER.keys(), ordered=True)
-        module_df = module_df.sort_values(by=["cat", "date"], ascending=[True, False])
+        module_df = module_df.sort_values(by=["cat", "date_temp"], ascending=[True, False])
         module_df["module"] = module
         module_df = module_df[["module", "content", "cat", "date", "date_delta"]]
         module_df = module_df.reset_index(drop=True)
